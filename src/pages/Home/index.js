@@ -112,7 +112,7 @@ export default function Home({ navigation }) {
               fontFamily: fonts.secondary[400],
               fontSize: windowWidth / 35,
               color: colors.white
-            }}>Sistem Informasi Pendaftaran Nikah</Text>
+            }}>Sistem Informasi Fasilitasi Nikah</Text>
             <Text style={{
               fontFamily: fonts.secondary[400],
               fontSize: windowWidth / 35,
