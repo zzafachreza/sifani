@@ -9,5 +9,8 @@ export const colors = {
   black: 'black',
   white: 'white',
   border: '#A9A9A9',
-  zavalabs: '#EFEFEF'
+  zavalabs: '#EFEFEF',
+  blue: '#011f5f',
+  coklat: '#e26c09',
+  pink: '#ff99cc'
 };

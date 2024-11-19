@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View, Image, FlatList, ImageBackground } from 'react-native'
+import { Alert, StyleSheet, Text, View, Image, Modal, FlatList, ImageBackground } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { apiURL, getData, storeData } from '../../utils/localStorage';
@@ -27,7 +27,87 @@ export default function Home({ navigation }) {
   const [user, setUser] = useState({});
   const [data, setData] = useState([]);
   const [slider, setSlider] = useState({});
+  const [waktu, setWaktu] = useState([]);
+  const [pilih, setPilih] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const DEFAULT_JAM = [
+    {
+      jam: '08.00 - 09.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '09.00 - 10.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '10.00 - 11.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '11.00 - 12.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '14.00 - 15.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '15.00 - 16.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '17.00 - 18.00 WIB',
+      cek: 0
+    }
+  ]
+  const [jam, setJam] = useState([
+    {
+      jam: '08.00 - 09.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '09.00 - 10.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '10.00 - 11.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '11.00 - 12.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '14.00 - 15.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '15.00 - 16.00 WIB',
+      cek: 0
+    },
+    {
+      jam: '17.00 - 18.00 WIB',
+      cek: 0
+    }
+  ])
   const isFocused = useIsFocused();
+
+  const __getBooked = (tgl) => {
+    setPilih(tgl);
+    axios.post(apiURL + '1data_nikahbook.php', {
+      tanggal: tgl
+    }).then(res => {
+      let TMP = [...jam];
+      TMP.map((item, index) => {
+        if (res.data.includes(item.jam)) {
+          TMP[index].cek = 1;
+        }
+      });
+      console.log(TMP);
+      setJam(TMP);
+      setModalVisible(true);
+    })
+  }
   useEffect(() => {
     if (isFocused) {
       __getTransaction();
@@ -68,6 +148,21 @@ export default function Home({ navigation }) {
   }
 
   const __getTransaction = () => {
+
+    axios.post(apiURL + '1data_nikahdone.php').then(res => {
+
+      let OBJ = {};
+      res.data.map(i => {
+
+        OBJ[i.tanggal] = { selected: true }
+      });
+
+
+      setTanggal(OBJ);
+
+    });
+
+
     getData('user').then(res => {
       setUser(res);
       axios.post(apiURL + '1data_acara.php').then(x => {
@@ -145,104 +240,105 @@ export default function Home({ navigation }) {
         flex: 1,
         paddingTop: 0,
       }}>
-      <ScrollView>
-        <MyCarouser />
+        <ScrollView>
+          <MyCarouser />
 
-        <View style={{
-          padding:10
-        }}>
-        <Calendar
-         scrollable
-          disableAllTouchEventsForDisabledDays={true}
-          theme={{
-          
-            calendarBackground: colors.white,
-            textDayFontFamily:fonts.primary[600],
-            textMonthFontFamily: fonts.primary[600],
-            textDayHeaderFontFamily: fonts.primary[600],
-            textDayFontSize:15,
-            arrowColor:colors.primary,
-            selectedDayBackgroundColor:colors.primary,
-            todayTextColor:colors.primary,
-            
-            
-
-          }}
-          onDayPress={x => {
-            console.log(x)
-          }}
-
-          markedDates={tanggal}
-        />
-        </View>
-
-        <View style={{
-          marginTop: 20,
-          flexDirection: 'row',
-          justifyContent: 'space-around'
-        }}>
-          <TouchableOpacity onPress={() => navigation.navigate('SAdd', user)} style={{
-            backgroundColor: colors.primary,
-            width: windowWidth / 4,
-            height: windowHeight / 9,
-            padding: 15,
-            borderRadius: 10,
+          <View style={{
+            padding: 10
           }}>
-            <Image source={require('../../assets/A1.png')} style={{
-              width: windowWidth / 5,
-              height: windowHeight / 20,
-              resizeMode: 'contain'
-            }} />
-            <Text style={{
-              fontFamily: fonts.secondary[400],
-              fontSize: windowWidth / 38,
-              color: colors.white,
-              textAlign: 'center',
-              marginTop: '2%'
-            }}>Daftar Nikah</Text>
-          </TouchableOpacity>
+            <Calendar
+              scrollable
+              disableAllTouchEventsForDisabledDays={true}
+              theme={{
 
-          <TouchableOpacity onPress={() => navigation.navigate('KhutbahNikah')} style={{
-            borderRadius: 10,
-            backgroundColor: colors.primary,
-            width: windowWidth / 4,
-            height: windowHeight / 9,
-            padding: 15,
+                calendarBackground: colors.white,
+                textDayFontFamily: fonts.primary[600],
+                textMonthFontFamily: fonts.primary[600],
+                textDayHeaderFontFamily: fonts.primary[600],
+                textDayFontSize: 15,
+                arrowColor: colors.primary,
+                selectedDayBackgroundColor: colors.primary,
+                todayTextColor: colors.primary,
+
+
+
+              }}
+              onDayPress={day => {
+                console.log('selected day', day.dateString);
+                __getBooked(day.dateString);
+              }}
+
+              markedDates={tanggal}
+            />
+          </View>
+
+          <View style={{
+            marginTop: 20,
+            flexDirection: 'row',
+            justifyContent: 'space-around'
           }}>
-            <Image source={require('../../assets/A4.png')} style={{
-              width: windowWidth / 5,
-              height: windowHeight / 20,
-              resizeMode: 'contain'
-            }} />
-            <Text style={{
-              fontFamily: fonts.secondary[400],
-              fontSize: windowWidth / 38,
-              color: colors.white,
-              textAlign: 'center',
-              marginTop: '2%'
-            }}>Khutbah Nikah</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Sedekah')} style={{
-            backgroundColor: colors.primary,
-            width: windowWidth / 4,
-            height: windowHeight / 9,
-            padding: 15,
-            borderRadius: 10,
-          }}>
-            <Image source={require('../../assets/A3.png')} style={{
-              width: windowWidth / 5,
-              height: windowHeight / 20,
-              resizeMode: 'contain'
-            }} />
-            <Text style={{
-              fontFamily: fonts.secondary[400],
-              fontSize: windowWidth / 38,
-              color: colors.white,
-              textAlign: 'center',
-              marginTop: '2%'
-            }}>Sedekah</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity onPress={() => navigation.navigate('SAdd', user)} style={{
+              backgroundColor: colors.primary,
+              width: windowWidth / 4,
+              height: windowHeight / 9,
+              padding: 15,
+              borderRadius: 10,
+            }}>
+              <Image source={require('../../assets/A1.png')} style={{
+                width: windowWidth / 5,
+                height: windowHeight / 20,
+                resizeMode: 'contain'
+              }} />
+              <Text style={{
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 38,
+                color: colors.white,
+                textAlign: 'center',
+                marginTop: '2%'
+              }}>Daftar Nikah</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.navigate('KhutbahNikah')} style={{
+              borderRadius: 10,
+              backgroundColor: colors.primary,
+              width: windowWidth / 4,
+              height: windowHeight / 9,
+              padding: 15,
+            }}>
+              <Image source={require('../../assets/A4.png')} style={{
+                width: windowWidth / 5,
+                height: windowHeight / 20,
+                resizeMode: 'contain'
+              }} />
+              <Text style={{
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 38,
+                color: colors.white,
+                textAlign: 'center',
+                marginTop: '2%'
+              }}>Khutbah Nikah</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Sedekah')} style={{
+              backgroundColor: colors.primary,
+              width: windowWidth / 4,
+              height: windowHeight / 9,
+              padding: 15,
+              borderRadius: 10,
+            }}>
+              <Image source={require('../../assets/A3.png')} style={{
+                width: windowWidth / 5,
+                height: windowHeight / 20,
+                resizeMode: 'contain'
+              }} />
+              <Text style={{
+                fontFamily: fonts.secondary[400],
+                fontSize: windowWidth / 38,
+                color: colors.white,
+                textAlign: 'center',
+                marginTop: '2%'
+              }}>Sedekah</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </ImageBackground>
 
@@ -254,7 +350,7 @@ export default function Home({ navigation }) {
         flexDirection: 'row',
         borderTopWidth: 1,
         borderTopColor: colors.primary,
-        marginTop:30
+        marginTop: 30
       }}>
         <TouchableOpacity onPress={() => {
 
@@ -315,6 +411,64 @@ export default function Home({ navigation }) {
         </TouchableOpacity>
       </View>
 
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={{
+          backgroundColor: '#00000088',
+          flex: 1,
+          padding: 10,
+          justifyContent: 'center',
+        }}>
+          <View style={{
+            height: windowHeight / 1.8,
+            backgroundColor: colors.white,
+            borderRadius: 10,
+            padding: 10,
+          }}>
+            <Text style={{
+              fontFamily: fonts.secondary[600],
+              color: colors.primary,
+              textAlign: 'center'
+            }}>Jadwal Pernikahan{'\n'}{moment(pilih).format('dddd, DD MMMM YYYY')}</Text>
+
+            <View style={{
+              flex: 1,
+              marginTop: 20,
+            }}>
+              <FlatList data={jam} renderItem={({ item, index }) => {
+                return (
+                  <View style={{
+                    marginVertical: 4,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }} >
+                    <Text style={{
+                      fontSize: 12,
+                      width: '40%',
+                      fontFamily: fonts.secondary[600],
+                      color: item.cek > 0 ? colors.border : colors.black,
+                      marginRight: 10,
+                    }}>{item.jam}</Text>
+                    <Icon type='ionicon' color={item.cek > 0 ? colors.border : colors.success} name={item.cek > 0 ? 'close-circle' : 'checkmark-circle'} />
+                  </View>
+                )
+              }} />
+            </View>
+            <MyButton title="Tutup" onPress={() => {
+              setModalVisible(false);
+              setJam(DEFAULT_JAM)
+            }} />
+
+          </View>
+        </View>
+      </Modal>
 
     </SafeAreaView >
 
