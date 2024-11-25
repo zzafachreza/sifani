@@ -202,12 +202,12 @@ export default function Home({ navigation }) {
               fontFamily: fonts.secondary[600],
               fontSize: windowWidth / 28,
               color: colors.white
-            }}>SI Fani</Text>
+            }}>SIFANi</Text>
             <Text style={{
               fontFamily: fonts.secondary[400],
               fontSize: windowWidth / 35,
               color: colors.white
-            }}>Sistem Informasi Fasilitasi Nikah</Text>
+            }}>Sistem Informasi Fasilitasi Akad Nikah</Text>
             <Text style={{
               fontFamily: fonts.secondary[400],
               fontSize: windowWidth / 35,
