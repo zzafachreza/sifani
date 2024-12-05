@@ -32,7 +32,7 @@ export default function SAddIstri({ navigation, route }) {
             } else if (response.error) {
                 // console.log('Image Picker Error: ', response.error);
             } else {
-                if (response.fileSize <= 2000000) {
+                if (response.fileSize <= 5000000) {
                     let source = { uri: response.uri };
                     switch (xyz) {
                         case 1:
@@ -44,7 +44,7 @@ export default function SAddIstri({ navigation, route }) {
                     }
                 } else {
                     showMessage({
-                        message: 'Ukuran Foto Terlalu Besar Max 500 KB',
+                        message: 'Ukuran Foto Terlalu Besar Max 5 MB',
                         type: 'danger',
                     });
                 }

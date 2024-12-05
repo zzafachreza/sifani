@@ -460,7 +460,7 @@ export default function TimSetDetail({ navigation, route }) {
                     </ImageBackground>
                 </ScrollView>
             </ViewShot>
-            <View style={{
+            {/* <View style={{
                 flexDirection: 'row',
                 justifyContent: 'space-around',
                 padding: 10,
@@ -488,7 +488,7 @@ export default function TimSetDetail({ navigation, route }) {
                 </View>
 
 
-            </View >
+            </View > */}
         </>
     )
 }

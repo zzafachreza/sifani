@@ -33,7 +33,7 @@ export default function SAddSuami({ navigation, route }) {
                 // console.log('Image Picker Error: ', response.error);
             } else {
 
-                if (response.fileSize <= 2000000) {
+                if (response.fileSize <= 5000000) {
                     let source = { uri: response.uri };
                     switch (xyz) {
                         case 1:
@@ -45,7 +45,7 @@ export default function SAddSuami({ navigation, route }) {
                     }
                 } else {
                     showMessage({
-                        message: 'Ukuran Foto Terlalu Besar Max 2 MB',
+                        message: 'Ukuran Foto Terlalu Besar Max 5 MB',
                         type: 'danger',
                     });
                 }

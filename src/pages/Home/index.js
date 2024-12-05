@@ -151,14 +151,14 @@ export default function Home({ navigation }) {
 
     axios.post(apiURL + '1data_nikahdone.php').then(res => {
 
-      let OBJ = {};
-      res.data.map(i => {
+      // let OBJ = {};
+      // res.data.map(i => {
 
-        OBJ[i.tanggal] = { selected: true }
-      });
+      //   OBJ[i.tanggal] = { selected: true }
+      // });
 
 
-      setTanggal(OBJ);
+      // setTanggal(OBJ);
 
     });
 

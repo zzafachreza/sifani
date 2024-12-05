@@ -32,7 +32,7 @@ export default function SAddTrf({ navigation, route }) {
             } else if (response.error) {
                 // console.log('Image Picker Error: ', response.error);
             } else {
-                if (response.fileSize <= 2000000) {
+                if (response.fileSize <= 5000000) {
                     let source = { uri: response.uri };
                     switch (xyz) {
                         case 1:
@@ -44,7 +44,7 @@ export default function SAddTrf({ navigation, route }) {
                     }
                 } else {
                     showMessage({
-                        message: 'Ukuran Foto Terlalu Besar Max 500 KB',
+                        message: 'Ukuran Foto Terlalu Besar Max 5 MB',
                         type: 'danger',
                     });
                 }
@@ -130,7 +130,7 @@ export default function SAddTrf({ navigation, route }) {
             setLoading(true);
             axios.post(apiURL + '1add_nikah.php', kirim).then(res => {
                 setLoading(false);
-                Alert.alert('SiDani', 'Selamat perintaan kamu berhasil dikirim !');
+                Alert.alert('SIFANi', 'Pendaftaran anda segera diverifikasi oleh admin, dan akan dikirimkan via email atau Whatsapp');
                 navigation.replace('Home');
                 console.log(res.data);
             })
