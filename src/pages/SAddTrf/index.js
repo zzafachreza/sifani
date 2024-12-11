@@ -32,17 +32,22 @@ export default function SAddTrf({ navigation, route }) {
             } else if (response.error) {
                 // console.log('Image Picker Error: ', response.error);
             } else {
-                if (response.fileSize <= 5000000) {
-                    let source = { uri: response.uri };
-                    switch (xyz) {
-                        case 1:
-                            setKirim({
-                                ...kirim,
-                                foto_transfer: `data:${response.type};base64, ${response.base64}`,
-                            });
-                            break;
+                if (response?.assets && response.assets.length > 0) {
+                    const image = response.assets[0];
+                    if (image.fileSize <= 5000000) {
+                        let source = { uri: image.uri };
+                        setKirim({
+                            ...kirim,
+                            foto_transfer: source.uri, // Simpan URI ke state
+                        });
+                    } else {
+                        showMessage({
+                            message: 'Ukuran Foto Terlalu Besar Max 5 MB',
+                            type: 'danger',
+                        });
                     }
-                } else {
+                }
+                 else {
                     showMessage({
                         message: 'Ukuran Foto Terlalu Besar Max 5 MB',
                         type: 'danger',
@@ -109,13 +114,12 @@ export default function SAddTrf({ navigation, route }) {
     const [kirim, setKirim] = useState(route.params);
 
     useEffect(() => {
-        console.log('700' + generateData(1));
         setKirim({
             ...kirim,
             pembayaran: 'TRANSFER',
-            biaya: '700' + generateData(1)
-        })
-    }, [])
+            biaya: '700000', // Biaya tetap tanpa kode unik
+        });
+    }, []);
 
 
     const sendServer = () => {
@@ -130,7 +134,7 @@ export default function SAddTrf({ navigation, route }) {
             setLoading(true);
             axios.post(apiURL + '1add_nikah.php', kirim).then(res => {
                 setLoading(false);
-                Alert.alert('SIFANi', 'Pendaftaran anda segera diverifikasi oleh admin, dan akan dikirimkan via email atau Whatsapp');
+                Alert.alert('SIFANi', 'Pembayaran Anda Berhasil! Pendaftaran anda segera diverifikasi oleh admin, dan akan dikirimkan via email atau Whatsapp');
                 navigation.replace('Home');
                 console.log(res.data);
             })
@@ -140,13 +144,13 @@ export default function SAddTrf({ navigation, route }) {
     }
 
 
-    const generateData = (size) => {
-        var digits = 3;
-        return Array.apply(null, { length: size || 100 }).map(function () {
-            return Math.floor(Math.random() * Math.pow(10, digits) + Math.pow(10, digits)).toString().slice(-digits);
-        });
+    // const generateData = (size) => {
+    //     var digits = 3;
+    //     return Array.apply(null, { length: size || 100 }).map(function () {
+    //         return Math.floor(Math.random() * Math.pow(10, digits) + Math.pow(10, digits)).toString().slice(-digits);
+    //     });
 
-    }
+    // }
 
     return (
         <SafeAreaView style={{
@@ -165,7 +169,7 @@ export default function SAddTrf({ navigation, route }) {
                 <Text style={{
                     fontFamily: fonts.secondary[400],
                     fontSize: windowWidth / 25,
-                }}>Rp. 700.{generateData(1)}</Text>
+                }}>Rp. 700.000</Text>
 
 
                 <MyGap jarak={10} />
@@ -250,7 +254,7 @@ export default function SAddTrf({ navigation, route }) {
 
 
                     <MyGap jarak={20} />
-                    <UploadFoto onPress2={() => getGallery(1)} label="Upload Bukti Transfer" />
+                    <UploadFoto onPress2={() => getGallery(1)} label="Upload Bukti Transfer" foto={kirim.foto_transfer} />
 
                 </>}
                 <MyGap jarak={20} />

@@ -16,6 +16,7 @@ import 'intl/locale-data/jsonp/en';
 import MyCarouser from '../../components/MyCarouser';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import moment from 'moment';
+import { Pressable } from 'react-native';
 
 
 
@@ -277,26 +278,7 @@ export default function Home({ navigation }) {
             flexDirection: 'row',
             justifyContent: 'space-around'
           }}>
-            <TouchableOpacity onPress={() => navigation.navigate('SAdd', user)} style={{
-              backgroundColor: colors.primary,
-              width: windowWidth / 4,
-              height: windowHeight / 9,
-              padding: 15,
-              borderRadius: 10,
-            }}>
-              <Image source={require('../../assets/A1.png')} style={{
-                width: windowWidth / 5,
-                height: windowHeight / 20,
-                resizeMode: 'contain'
-              }} />
-              <Text style={{
-                fontFamily: fonts.secondary[400],
-                fontSize: windowWidth / 38,
-                color: colors.white,
-                textAlign: 'center',
-                marginTop: '2%'
-              }}>Daftar Nikah</Text>
-            </TouchableOpacity>
+           
 
             <TouchableOpacity onPress={() => navigation.navigate('KhutbahNikah')} style={{
               borderRadius: 10,
@@ -413,62 +395,100 @@ export default function Home({ navigation }) {
 
 
       <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={{
-          backgroundColor: '#00000088',
+  animationType="fade"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => {
+    Alert.alert('Modal has been closed.');
+    setModalVisible(!modalVisible);
+  }}
+>
+  <View
+    style={{
+      backgroundColor: '#00000088',
+      flex: 1,
+      padding: 10,
+      justifyContent: 'center',
+    }}
+  >
+    <View
+      style={{
+        height: windowHeight / 1.8,
+        backgroundColor: colors.white,
+        borderRadius: 10,
+        padding: 10,
+      }}
+    >
+      <Text
+        style={{
+          fontFamily: fonts.secondary[600],
+          color: colors.primary,
+          textAlign: 'center',
+        }}
+      >
+        Jadwal Pernikahan{'\n'}
+        {moment(pilih).format('dddd, DD MMMM YYYY')}
+      </Text>
+
+      <View
+        style={{
           flex: 1,
-          padding: 10,
-          justifyContent: 'center',
-        }}>
-          <View style={{
-            height: windowHeight / 1.8,
-            backgroundColor: colors.white,
-            borderRadius: 10,
-            padding: 10,
-          }}>
-            <Text style={{
-              fontFamily: fonts.secondary[600],
-              color: colors.primary,
-              textAlign: 'center'
-            }}>Jadwal Pernikahan{'\n'}{moment(pilih).format('dddd, DD MMMM YYYY')}</Text>
+          marginTop: 20,
+        }}
+      >
+        <FlatList
+          data={jam}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => {
+            return (
+              <Pressable
+                style={{
+                  marginVertical: 4,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: 10,
+                  borderRadius: 8,
+                  backgroundColor: item.cek > 0 ? colors.lightGray : colors.white,
+                  opacity: item.cek > 0 ? 0.5 : 1,
+                }}
+                disabled={item.cek > 0} // Hanya dapat diklik jika tersedia
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.navigate('SAdd', user, {jam: item.jam, tanggal: pilih });
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    width: '40%',
+                    fontFamily: fonts.secondary[600],
+                    color: item.cek > 0 ? colors.border : colors.black,
+                    marginRight: 10,
+                  }}
+                >
+                  {item.jam}
+                </Text>
+                <Icon
+                  type="ionicon"
+                  color={item.cek > 0 ? colors.border : colors.success}
+                  name={item.cek > 0 ? 'close-circle' : 'checkmark-circle'}
+                />
+              </Pressable>
+            );
+          }}
+        />
+      </View>
+      <MyButton
+        title="Tutup"
+        onPress={() => {
+          setModalVisible(false);
+          setJam(DEFAULT_JAM);
+        }}
+      />
+    </View>
+  </View>
+</Modal>
 
-            <View style={{
-              flex: 1,
-              marginTop: 20,
-            }}>
-              <FlatList data={jam} renderItem={({ item, index }) => {
-                return (
-                  <View style={{
-                    marginVertical: 4,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }} >
-                    <Text style={{
-                      fontSize: 12,
-                      width: '40%',
-                      fontFamily: fonts.secondary[600],
-                      color: item.cek > 0 ? colors.border : colors.black,
-                      marginRight: 10,
-                    }}>{item.jam}</Text>
-                    <Icon type='ionicon' color={item.cek > 0 ? colors.border : colors.success} name={item.cek > 0 ? 'close-circle' : 'checkmark-circle'} />
-                  </View>
-                )
-              }} />
-            </View>
-            <MyButton title="Tutup" onPress={() => {
-              setModalVisible(false);
-              setJam(DEFAULT_JAM)
-            }} />
-
-          </View>
-        </View>
-      </Modal>
 
     </SafeAreaView >
 

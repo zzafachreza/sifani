@@ -33,15 +33,19 @@ export default function SAddSuami({ navigation, route }) {
                 // console.log('Image Picker Error: ', response.error);
             } else {
 
-                if (response.fileSize <= 5000000) {
-                    let source = { uri: response.uri };
-                    switch (xyz) {
-                        case 1:
-                            setKirim({
-                                ...kirim,
-                                suami_foto: `data:${response.type};base64, ${response.base64}`,
-                            });
-                            break;
+                if (response?.assets && response.assets.length > 0) {
+                    const image = response.assets[0];
+                    if (image.fileSize <= 5000000) {
+                        let source = { uri: image.uri };
+                        setKirim({
+                            ...kirim,
+                            suami_foto: source.uri, // Simpan URI ke state
+                        });
+                    } else {
+                        showMessage({
+                            message: 'Ukuran Foto Terlalu Besar Max 5 MB',
+                            type: 'danger',
+                        });
                     }
                 } else {
                     showMessage({
@@ -246,7 +250,7 @@ export default function SAddSuami({ navigation, route }) {
                 }} iconname="people" placeholder="masukan nama orang tua" />
 
                 <MyGap jarak={20} />
-                <UploadFoto onPress2={() => getGallery(1)} label="Upload pas foto (latar biru)" />
+                <UploadFoto onPress2={() => getGallery(1)} label="Upload pas foto (latar biru)" foto={kirim.suami_foto} />
                 <MyGap jarak={20} />
                 {!loading && <MyButton onPress={sendServer} title="Selanjutnya" warna={colors.primary} Icons="person-add" />}
 
