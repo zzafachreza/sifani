@@ -245,6 +245,24 @@ export default function Home({ navigation }) {
           <MyCarouser />
 
           <View style={{
+            padding:10,
+            flexDirection:"row",
+            justifyContent:'center'
+          }}>
+            <View style={{
+              padding:10,
+              backgroundColor:colors.primary,
+              width:'70%'
+            }}>
+              <Text style={{
+                fontFamily:fonts.primary[600],
+                textAlign:"center",
+                fontSize:12
+              }}>Pilih Tanggal Akad Nikah</Text>
+            </View>
+          </View>
+
+          <View style={{
             padding: 10
           }}>
             <Calendar
