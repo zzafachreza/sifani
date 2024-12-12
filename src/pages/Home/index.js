@@ -454,7 +454,7 @@ export default function Home({ navigation }) {
                 disabled={item.cek > 0} // Hanya dapat diklik jika tersedia
                 onPress={() => {
                   setModalVisible(false);
-                  navigation.navigate('SAdd', user, {jam: item.jam, tanggal: pilih });
+                  navigation.navigate('SAdd',{user: user, jam: item.jam, tanggal: pilih});
                 }}
               >
                 <Text

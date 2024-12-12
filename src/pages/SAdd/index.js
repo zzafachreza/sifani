@@ -14,12 +14,13 @@ import DatePicker from 'react-native-datepicker'
 import { maskJs } from 'mask-js';
 export default function SAdd({ navigation, route }) {
 
+    const {jam, tanggal, user} = route.params;
+    console.log('Jam yang di ambil : ' + jam)
     const [loading, setLoading] = useState(false);
-
     const [kirim, setKirim] = useState({
-        fid_user: route.params.id,
-        tanggal: '',
-        waktu: '08.00 - 09.00 WIB',
+        fid_user: user.id,
+        tanggal: tanggal,
+        waktu: jam,
         oleh: 'Wali Sendiri',
         lokasi: 'Masjid Agung Baitul Makmur Meulaboh'
     });
@@ -72,7 +73,7 @@ export default function SAdd({ navigation, route }) {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <DatePicker
                     style={{ width: '100%' }}
-                    date={kirim.tanggal}
+                    date={tanggal}
                     mode="date"
                     placeholder="select date"
                     format="YYYY-MM-DD"
@@ -161,51 +162,22 @@ export default function SAdd({ navigation, route }) {
                     fontSize: windowWidth / 32,
                 }}>17.00 - 18.00 WIB</Text>
                 <MyGap jarak={10} />
-                <MyPicker onValueChange={x => {
-
-
-                    setKirim({
-                        ...kirim,
-                        waktu: x
-                    });
-
-                }} iconname="time" label="Waktu" data={[
-                    {
-                        label: '08.00 - 09.00 WIB',
-                        value: '08.00 - 09.00 WIB'
-
-                    },
-                    {
-                        label: '09.00 - 10.00 WIB',
-                        value: '09.00 - 10.00 WIB'
-
-                    },
-                    {
-                        label: '10.00 - 11.00 WIB',
-                        value: '10.00 - 11.00 WIB'
-
-                    }, {
-                        label: '11.00 - 12.00 WIB',
-                        value: '11.00 - 12.00 WIB'
-
-                    },
-                    {
-                        label: '14.00 - 15.00 WIB',
-                        value: '14.00 - 15.00 WIB'
-
-                    },
-                    {
-                        label: '15.00 - 16.00 WIB',
-                        value: '15.00 - 16.00 WIB'
-
-                    },
-                    {
-                        label: '17.00 - 18.00 WIB',
-                        value: '17.00 - 18.00 WIB'
-
-                    },
-
-                ]} />
+                <Text style={{
+                    fontFamily:fonts.primary[600],
+                    fontSize: windowWidth / 32,
+                }}>Waktu :</Text>
+                <View style={{
+                    padding:10,
+                    backgroundColor:colors.zavalabs,
+                    borderRadius:10,
+                    marginTop:5
+                }}>
+             
+                <Text style={{
+                    fontFamily:fonts.primary[400],
+                    fontSize:12
+                }}>{jam}</Text>
+                </View>
                 <MyGap jarak={10} />
                 <MyPicker onValueChange={x => {
                     setKirim({
