@@ -456,47 +456,53 @@ export default function Home({ navigation }) {
                 marginTop: 20,
               }}
             >
-              <FlatList
-                data={jam}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => {
-                  return (
-                    <Pressable
-                      style={{
-                        marginVertical: 4,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        padding: 10,
-                        borderRadius: 8,
-                        backgroundColor: item.cek > 0 || (moment(pilih).format('dddd') == 'Jumat' && index < 4) ? colors.lightGray : colors.white,
-                        opacity: item.cek > 0 || (moment(pilih).format('dddd') == 'Jumat' && index < 4) ? 0.5 : 1,
-                      }}
-                      disabled={item.cek > 0 || (moment(pilih).format('dddd') == 'Jumat' && index < 4)} // Hanya dapat diklik jika tersedia
-                      onPress={() => {
-                        setModalVisible(false);
-                        navigation.navigate('SAdd', { user: user, jam: item.jam, tanggal: pilih });
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 12,
-                          width: '40%',
-                          fontFamily: fonts.secondary[600],
-                          color: item.cek > 0 || (moment(pilih).format('dddd') == 'Jumat' && index < 4) ? colors.border : colors.black,
-                          marginRight: 10,
-                        }}
-                      >
-                        {item.jam}
-                      </Text>
-                      <Icon
-                        type="ionicon"
-                        color={item.cek > 0 || (moment(pilih).format('dddd') == 'Jumat' && index < 4) ? colors.border : colors.success}
-                        name={item.cek > 0 || (moment(pilih).format('dddd') == 'Jumat' && index < 4) ? 'close-circle' : 'checkmark-circle'}
-                      />
-                    </Pressable>
-                  );
-                }}
-              />
+          <FlatList
+  data={jam}
+  keyExtractor={(item, index) => index.toString()}
+  renderItem={({ item }) => {
+    const isJumat = moment(pilih).format('dddd') === 'Jumat';
+    const isDisabledOnJumat = isJumat && item.jam === '11.00 - 12.00 WIB'; // Disable hanya pada jam 11.00 - 12.00 WIB di hari Jumat
+
+    return (
+      <Pressable
+        style={{
+          marginVertical: 4,
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: 10,
+          borderRadius: 8,
+          backgroundColor: item.cek > 0 || isDisabledOnJumat ? colors.lightGray : colors.white,
+          opacity: item.cek > 0 || isDisabledOnJumat ? 0.5 : 1,
+        }}
+        disabled={item.cek > 0 || isDisabledOnJumat} // Disable berdasarkan kondisi
+        onPress={() => {
+          setModalVisible(false);
+          navigation.navigate('SAdd', { user: user, jam: item.jam, tanggal: pilih });
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 12,
+            width: '40%',
+            fontFamily: fonts.secondary[600],
+            color: item.cek > 0 || isDisabledOnJumat ? colors.border : colors.black,
+            marginRight: 10,
+          }}
+        >
+          {item.jam}
+        </Text>
+        <Icon
+          type="ionicon"
+          color={item.cek > 0 || isDisabledOnJumat ? colors.border : colors.success}
+          name={item.cek > 0 || isDisabledOnJumat ? 'close-circle' : 'checkmark-circle'}
+        />
+      </Pressable>
+    );
+  }}
+/>
+
+
+
             </View>
             <MyButton
               title="Tutup"

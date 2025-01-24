@@ -165,12 +165,20 @@ export default function TimSetDetail({ navigation, route }) {
                                 padding: 10,
                             }}>
                                 <View>
-                                    <Image source={{
-                                        uri: i.suami_foto
-                                    }} style={{
-                                        height: 150,
-                                        width: 100,
-                                    }} />
+                                <Image
+  source={{ uri: `${i.suami_foto}` }}
+  style={{
+    height: 150,
+    width: 100,
+    resizeMode: 'cover',
+  }}
+  onError={(error) => {
+    console.log('Error loading image:', error.nativeEvent.error);
+  }}
+/>
+
+
+
                                 </View>
                                 <View style={{
                                     flex: 1,
