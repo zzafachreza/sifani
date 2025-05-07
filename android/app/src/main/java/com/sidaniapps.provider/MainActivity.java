@@ -1,4 +1,4 @@
-package com.sidaniapps;
+package com.sidaniapps.provider;
 
 import com.facebook.react.ReactActivity;
 

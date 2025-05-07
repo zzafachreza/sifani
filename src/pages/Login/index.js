@@ -38,13 +38,13 @@ export default function ({ navigation }) {
             console.log(res.data);
             setLoading(false);
             if (res.data.status == 404) {
-
               Alert.alert('siDani', res.data.message);
-
             } else {
+              console.log('✅ User login berhasil:', res.data); // Tambahkan ini
               storeData('user', res.data);
               navigation.replace('Home');
             }
+            
           });
       }, 1200);
 

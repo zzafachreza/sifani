@@ -456,12 +456,19 @@ export default function Home({ navigation }) {
                 marginTop: 20,
               }}
             >
-          <FlatList
+
+    <FlatList
   data={jam}
   keyExtractor={(item, index) => index.toString()}
   renderItem={({ item }) => {
     const isJumat = moment(pilih).format('dddd') === 'Jumat';
-    const isDisabledOnJumat = isJumat && item.jam === '11.00 - 12.00 WIB'; // Disable hanya pada jam 11.00 - 12.00 WIB di hari Jumat
+    // Disable time slots from 8 AM to 11 AM on Friday
+    const isDisabledOnJumat = isJumat && 
+      (item.jam === '08.00 - 09.00 WIB' || 
+       item.jam === '09.00 - 10.00 WIB' || 
+       item.jam === '10.00 - 11.00 WIB'||
+       item.jam === '11.00 - 12.00 WIB'
+       );
 
     return (
       <Pressable
@@ -474,7 +481,7 @@ export default function Home({ navigation }) {
           backgroundColor: item.cek > 0 || isDisabledOnJumat ? colors.lightGray : colors.white,
           opacity: item.cek > 0 || isDisabledOnJumat ? 0.5 : 1,
         }}
-        disabled={item.cek > 0 || isDisabledOnJumat} // Disable berdasarkan kondisi
+        disabled={item.cek > 0 || isDisabledOnJumat} // Disable based on conditions
         onPress={() => {
           setModalVisible(false);
           navigation.navigate('SAdd', { user: user, jam: item.jam, tanggal: pilih });
@@ -496,13 +503,15 @@ export default function Home({ navigation }) {
           color={item.cek > 0 || isDisabledOnJumat ? colors.border : colors.success}
           name={item.cek > 0 || isDisabledOnJumat ? 'close-circle' : 'checkmark-circle'}
         />
+        {isDisabledOnJumat && (
+        <Text style={{ fontSize: 10, color: colors.danger, marginLeft: 10 }}>
+         
+          </Text>
+        )}
       </Pressable>
     );
   }}
 />
-
-
-
             </View>
             <MyButton
               title="Tutup"

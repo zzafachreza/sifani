@@ -1,4 +1,4 @@
-package com.sidaniapps;
+package com.sidaniapps.provider;
 
 import android.app.Application;
 import android.content.Context;

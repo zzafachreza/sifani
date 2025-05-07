@@ -41,7 +41,14 @@ export default function SAdd({ navigation, route }) {
                     waktu: kirim.waktu
                 }).then(res => {
                     if (res.data.status == 404) {
-                        navigation.navigate('SAddSuami', kirim);
+                        navigation.navigate('SAddSuami', {
+                            fid_user: user.id,
+                            tanggal: kirim.tanggal,
+                            waktu: kirim.waktu,
+                            lokasi: kirim.lokasi,
+                            oleh: kirim.oleh,
+                          });
+                          
                         showMessage({ type: 'success', message: 'Tanggal dan waktu tersedia !' })
                     } else if (res.data.status == 200) {
 
