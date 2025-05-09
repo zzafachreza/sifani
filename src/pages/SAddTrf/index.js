@@ -7,7 +7,8 @@ import { showMessage } from 'react-native-flash-message';
 import { MyButton, MyGap, MyPicker } from '../../components';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
-import { apiURL } from '../../utils/localStorage';
+import { apiURL, getData } from '../../utils/localStorage';
+import FastImage from 'react-native-fast-image';
 
 export default function SAddTrf({ navigation, route }) {
   const [foto, setFoto] = useState('https://zavalabs.com/nogambar.jpg');
@@ -26,8 +27,8 @@ export default function SAddTrf({ navigation, route }) {
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
         showMessage({ message: 'Pengambilan gambar dibatalkan', type: 'danger' });
-      } else if (response?.assets && response.assets.length > 0) {
-        const image = response.assets[0];
+      } else if (response) {
+        const image = response;
         if (image.uri && image.fileSize > 0) {
           const base64Image = `data:${image.type};base64,${image.base64}`;
           setKirim(prev => ({ ...prev, foto_transfer: base64Image }));
@@ -43,65 +44,43 @@ export default function SAddTrf({ navigation, route }) {
 
   useEffect(() => {
     const param = route.params || {};
-    setKirim(prev => ({
-      ...prev,
-      fid_user: param.fid_user || prev.fid_user, // JAGA-JAGA
-      suami_foto: param.suami_foto || prev.suami_foto,
-      istri_foto: param.istri_foto || prev.istri_foto,
-      pembayaran: 'TRANSFER',
-      biaya: '700000',
-      ...param, // disimpan paling akhir, biar gak overwrite yang penting
-    }));
+    getData('user').then(u => {
+      console.log(u)
+      setKirim(prev => ({
+        ...prev,
+        fid_user: u.id, // JAGA-JAGA
+        suami_foto: param.suami_foto || prev.suami_foto,
+        istri_foto: param.istri_foto || prev.istri_foto,
+        pembayaran: 'TRANSFER',
+        biaya: '700000',
+        ...param, // disimpan paling akhir, biar gak overwrite yang penting
+      }));
+    })
   }, []);
-  
-  const sendServer = async () => {
-    if (!kirim.foto_transfer || !kirim.suami_foto || !kirim.istri_foto) {
-      showMessage({
-        message: 'Pastikan semua foto sudah diunggah.',
-        type: 'danger',
-      });
-      return;
-    }
 
-    if (!kirim.fid_user) {
-      showMessage({
-        message: 'User ID tidak ditemukan. Proses tidak bisa dilanjutkan.',
-        type: 'danger',
-      });
-      return;
-    }
-
+  const sendServer = () => {
     setLoading(true);
 
-    try {
-      const payload = {
-        ...kirim,
-      };
+    setTimeout(() => {
 
-      const response = await axios.post(`${apiURL}1add_nikah.php`, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      axios.post(`${apiURL}1add_nikah.php`, kirim).then(res => {
+        console.log(res.data);
+        if (res.data.status == "success") {
+          showMessage({
+            type: 'success',
+            message: res.data.message
+          })
+          navigation.replace('Home')
 
-      if (response.data?.status === 'success') {
-        Alert.alert(
-          'SIFANi',
-          'Pendaftaran berhasil, akan diverifikasi oleh admin.',
-          [{ text: 'OK', onPress: () => navigation.replace('Home') }]
-        );
-      } else {
-        showMessage({ message: response.data?.message || 'Gagal', type: 'danger' });
-      }
-    } catch (err) {
-      console.error('❌ ERROR', err);
-      showMessage({
-        message: 'Terjadi kesalahan. Pastikan jaringan dan server aktif.',
-        type: 'danger',
-      });
-    } finally {
-      setLoading(false);
-    }
+          setLoading(false);
+
+        }
+      })
+
+
+
+    }, 1000)
+
   };
 
   const UploadFoto = () => (
@@ -118,13 +97,15 @@ export default function SAddTrf({ navigation, route }) {
       <Text style={{ fontFamily: fonts.secondary[600], color: colors.black }}>
         Upload Bukti Transfer (maksimal 2MB)
       </Text>
-      <Image
+      <FastImage
         source={{ uri: foto }}
         style={{
-          width: '50%',
+          marginVertical: 10,
+          width: 155,
+          height: 230,
           alignSelf: 'center',
-          aspectRatio: 2,
-          resizeMode: 'contain',
+          // aspectRatio: 2,
+          // resizeMode: 'contain',
         }}
       />
       <View style={{ flexDirection: 'row', marginTop: 10 }}>
@@ -194,11 +175,10 @@ export default function SAddTrf({ navigation, route }) {
           </>
         )}
         <MyGap jarak={20} />
-        {!loading ? (
-          <MyButton onPress={sendServer} title="Simpan" warna={colors.primary} Icons="person-add" />
-        ) : (
-          <ActivityIndicator size="large" color={colors.primary} />
-        )}
+        {loading && <ActivityIndicator size="large" color={colors.primary} />}
+        {!loading && <MyButton onPress={sendServer} title="Simpan" warna={colors.primary} Icons="person-add" />}
+
+
       </ScrollView>
     </SafeAreaView>
   );

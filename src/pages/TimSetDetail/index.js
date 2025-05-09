@@ -17,6 +17,7 @@ import ViewShot from "react-native-view-shot";
 import Share from 'react-native-share';
 import Orientation from 'react-native-orientation-locker';
 import { ImageBackground } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 export default function TimSetDetail({ navigation, route }) {
     const i = route.params;
@@ -165,17 +166,17 @@ export default function TimSetDetail({ navigation, route }) {
                                 padding: 10,
                             }}>
                                 <View>
-                                <Image
-  source={{ uri: `${i.suami_foto}` }}
-  style={{
-    height: 150,
-    width: 100,
-    resizeMode: 'cover',
-  }}
-  onError={(error) => {
-    console.log('Error loading image:', error.nativeEvent.error);
-  }}
-/>
+                                    <FastImage
+                                        source={{ uri: `${i.suami_foto}` }}
+                                        style={{
+                                            height: 150,
+                                            width: 100,
+                                            resizeMode: 'cover',
+                                        }}
+                                        onError={(error) => {
+                                            console.log('Error loading image:', error.nativeEvent.error);
+                                        }}
+                                    />
 
 
 
@@ -324,7 +325,7 @@ export default function TimSetDetail({ navigation, route }) {
                                 padding: 10,
                             }}>
                                 <View>
-                                    <Image source={{
+                                    <FastImage source={{
                                         uri: i.istri_foto
                                     }} style={{
                                         height: 150,

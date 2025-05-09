@@ -7,6 +7,7 @@ import { showMessage } from 'react-native-flash-message';
 import { MyButton, MyGap, MyInput } from '../../components';
 import DatePicker from 'react-native-datepicker';
 import { launchImageLibrary } from 'react-native-image-picker';
+import FastImage from 'react-native-fast-image'
 
 export default function SAddSuami({ navigation, route }) {
   const [foto, setFoto] = useState('https://zavalabs.com/nogambar.jpg');
@@ -35,24 +36,22 @@ export default function SAddSuami({ navigation, route }) {
         return;
       }
 
-      if (response?.assets && response.assets.length > 0) {
-        const image = response.assets[0];
+      const image = response;
 
-        if (!image.fileSize || image.fileSize > 2097152) {
-          showMessage({ message: 'Ukuran gambar lebih dari 2MB.', type: 'danger' });
-          setFoto('https://zavalabs.com/nogambar.jpg');
-          setKirim(prev => ({ ...prev, suami_foto: null }));
-          return;
-        }
 
-        const base64Image = `data:${image.type};base64,${image.base64}`;
-        setKirim(prev => ({ ...prev, suami_foto: base64Image }));
-        setFoto(image.uri);
-      } else {
-        showMessage({ message: 'Gambar tidak valid.', type: 'danger' });
+      if (!image.fileSize || image.fileSize > 2097152) {
+        showMessage({ message: 'Ukuran gambar lebih dari 2MB.', type: 'danger' });
         setFoto('https://zavalabs.com/nogambar.jpg');
         setKirim(prev => ({ ...prev, suami_foto: null }));
+        return;
       }
+
+      const base64Image = `data:${image.type};base64,${image.base64}`;
+      setKirim(prev => ({ ...prev, suami_foto: base64Image }));
+      setFoto(image.uri);
+
+
+
     });
   };
 
@@ -106,13 +105,15 @@ export default function SAddSuami({ navigation, route }) {
       }}>
         Upload pas foto (latar biru) Maksimal 2MB
       </Text>
-      <Image
+      <FastImage
         source={{ uri: foto }}
         style={{
-          width: '50%',
+          marginVertical: 10,
+          width: 155,
+          height: 230,
           alignSelf: 'center',
-          aspectRatio: 2,
-          resizeMode: 'contain',
+          // aspectRatio: 2,
+          // resizeMode: 'contain',
         }}
       />
       <View style={{ flexDirection: 'row', marginTop: 10 }}>

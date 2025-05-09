@@ -7,7 +7,7 @@ import { showMessage } from 'react-native-flash-message';
 import { MyButton, MyGap, MyInput } from '../../components';
 import DatePicker from 'react-native-datepicker';
 import { launchImageLibrary } from 'react-native-image-picker';
-
+import FastImage from 'react-native-fast-image';
 export default function SAddIstri({ navigation, route }) {
   const [foto, setFoto] = useState('https://zavalabs.com/nogambar.jpg');
   const [loading, setLoading] = useState(false);
@@ -32,35 +32,34 @@ export default function SAddIstri({ navigation, route }) {
         return;
       }
 
-      if (response?.assets && response.assets.length > 0) {
-        const image = response.assets[0];
-        const estimatedSize = Math.ceil((image.base64.length * 3) / 4);
+      const image = response;
 
-        if (!image.fileSize || estimatedSize > 2097152) {
-          showMessage({ message: 'Ukuran gambar melebihi 2MB!', type: 'danger' });
-          setFoto('https://zavalabs.com/nogambar.jpg');
-          setKirim(prev => ({ ...prev, istri_foto: null }));
-          return;
-        }
 
-        const base64Image = `data:${image.type};base64,${image.base64}`;
-        setKirim(prev => ({ ...prev, istri_foto: base64Image }));
-        setFoto(image.uri);
-      } else {
-        showMessage({ message: 'Gambar tidak valid', type: 'danger' });
+      if (!image.fileSize || image.fileSize > 2097152) {
+        showMessage({ message: 'Ukuran gambar lebih dari 2MB.', type: 'danger' });
+        setFoto('https://zavalabs.com/nogambar.jpg');
+        setKirim(prev => ({ ...prev, istri_foto: null }));
+        return;
       }
+
+      const base64Image = `data:${image.type};base64,${image.base64}`;
+      setKirim(prev => ({ ...prev, istri_foto: base64Image }));
+      setFoto(image.uri);
+
+
+
     });
   };
 
   const sendServer = () => {
     const { suami_foto, istri_foto, ...logData } = kirim;
     console.log('📦 DATA FINAL ISTRI (tanpa base64):', logData);
-  
+
     if (!kirim.fid_user || kirim.fid_user === '') {
       showMessage({ message: 'User ID tidak ditemukan. Silakan ulangi proses.', type: 'danger' });
       return;
     }
-  
+
     const required = [
       { key: 'istri_nama', label: 'Nama' },
       { key: 'istri_tempat_lahir', label: 'Tempat lahir' },
@@ -71,21 +70,21 @@ export default function SAddIstri({ navigation, route }) {
       { key: 'istri_orangtua', label: 'Orang tua' },
       { key: 'istri_foto', label: 'Foto' },
     ];
-  
+
     for (let i of required) {
       if (!kirim[i.key] || kirim[i.key] === '') {
         showMessage({ message: `${i.label} masih kosong`, type: 'danger' });
         return;
       }
     }
-  
+
     navigation.navigate('SAddTrf', {
       ...kirim,
       fid_user: kirim.fid_user,
     });
   };
-  
-  
+
+
   const UploadFoto = () => (
     <View style={{
       padding: 10,
@@ -100,12 +99,17 @@ export default function SAddIstri({ navigation, route }) {
         fontFamily: fonts.secondary[600],
         color: colors.black,
       }}>Upload pas foto (latar biru) Maksimal 2MB</Text>
-      <Image source={{ uri: foto }} style={{
-        width: '50%',
-        alignSelf: 'center',
-        aspectRatio: 2,
-        resizeMode: 'contain',
-      }} />
+      <FastImage
+        source={{ uri: foto }}
+        style={{
+          marginVertical: 10,
+          width: 155,
+          height: 230,
+          alignSelf: 'center',
+          // aspectRatio: 2,
+          // resizeMode: 'contain',
+        }}
+      />
       <View style={{ flexDirection: 'row', marginTop: 10 }}>
         <View style={{ flex: 1, paddingLeft: 5 }}>
           <MyButton
